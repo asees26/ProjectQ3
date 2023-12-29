@@ -10,7 +10,17 @@ import java.util.Date;
 @Table(name = "userAccount")
 public class UserAccount {
 @Id
-    private Long userId;
+private Long Id;
+
+    public Long getId() {
+        return Id;
+    }
+
+    public void setId(Long id) {
+        Id = id;
+    }
+
+    private String  userId;
 
     private Long accountNumber;
 
@@ -56,11 +66,11 @@ public class UserAccount {
 
     private Date creationTime;
 
-    public void setUserId(Long userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 
-    public Long getUserId() {
+    public String getUserId() {
         return userId;
     }
 }
