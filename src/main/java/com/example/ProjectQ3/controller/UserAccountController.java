@@ -1,9 +1,9 @@
 package com.example.ProjectQ3.controller;
 
-import com.example.ProjectQ3.models.User;
 import com.example.ProjectQ3.models.UserAccount;
 import com.example.ProjectQ3.repository.UserAccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,14 +27,26 @@ public class UserAccountController {
     }
 
     @PutMapping("/{userId}")
-    public Optional<UserAccount> updateUserAccount(@PathVariable String userId,@RequestBody UserAccount userAccount){
+    public ResponseEntity<UserAccount> updateUserAccount(@PathVariable String userId, @RequestBody UserAccount userAccount){
         Optional<UserAccount> existingUserAccount = userAccountRepository.findByUserId(userId);
        if(existingUserAccount.isPresent()){
            UserAccount userAccount1 = existingUserAccount.get();
            userAccount1.setBalance(userAccount.getBalance());
            userAccountRepository.save(userAccount1);
+           return ResponseEntity.ok(userAccount1);
        }
-       return Optional.ofNullable(userAccount);
+       else {
+           return ResponseEntity.notFound().build();
+    }
+    }
+
+    @DeleteMapping({"/{userId}"})
+    public Optional<UserAccount> deleteUserAccount(@PathVariable String userId){
+        Optional<UserAccount> dbUserAccount = userAccountRepository.findByUserId(userId);
+        if(dbUserAccount.isPresent()){
+            userAccountRepository.deleteById(userId);
+        }
+        return null;
     }
 
 }
