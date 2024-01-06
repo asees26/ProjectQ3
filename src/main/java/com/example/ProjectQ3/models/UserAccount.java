@@ -1,76 +1,91 @@
 package com.example.ProjectQ3.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.Objects;
 
 @Entity
-@Table(name = "userAccount")
+@Table(name = "user_account")
 public class UserAccount {
-@Id
-private Long Id;
 
-    public Long getId() {
-        return Id;
-    }
 
-    public void setId(Long id) {
-        Id = id;
-    }
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "user_id", insertable = false, updatable = false)
+    private User user;
 
-    private String  userId;
-
+    @Column(name = "account_number", columnDefinition = "BIGINT")
     private Long accountNumber;
+    @Column(name = "balance", columnDefinition = "BIGINT")
+    private Long balance;
+    @Column(name = "account_type", columnDefinition = "VARCHAR(255)")
+    private String accountType;
+    @Column(name = "creation_time")
+    private LocalDateTime creationTime;
 
-    private Long Balance;
+    @Id
+    @Column(name = "user_id")
+    private Long userId;
 
+    public User getUser() {
+        return user;
+    }
 
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     public Long getAccountNumber() {
         return accountNumber;
     }
 
+    public void setAccountNumber(Long accountNumber) {
+        this.accountNumber = accountNumber;
+    }
+
     public Long getBalance() {
-        return Balance;
+        return balance;
+    }
+
+    public void setBalance(Long balance) {
+        this.balance = balance;
     }
 
     public String getAccountType() {
         return accountType;
     }
 
-
-
-    public void setAccountNumber(Long accountNumber) {
-        this.accountNumber = accountNumber;
-    }
-
-    public void setBalance(Long balance) {
-        Balance = balance;
-    }
-
     public void setAccountType(String accountType) {
         this.accountType = accountType;
     }
 
-    public void setCreationTime(Date creationTime) {
-        this.creationTime = creationTime;
-    }
-
-    public Date getCreationTime() {
+    public LocalDateTime getCreationTime() {
         return creationTime;
     }
 
-    private String accountType;
-
-    private Date creationTime;
-
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setCreationTime(LocalDateTime creationTime) {
+        this.creationTime = creationTime;
     }
 
-    public String getUserId() {
+    public Long getUserId() {
         return userId;
     }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        UserAccount that = (UserAccount) obj;
+        return Objects.equals(userId, that.userId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(userId);
+    }
+
 }

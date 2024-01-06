@@ -7,7 +7,7 @@ import java.util.List;
 public class UserService {
 
     private UserRepository userRepository;
-    public List<User> findByUserID(String userId) {
+    public List<User> findByUserID(Long userId) {
         return userRepository.findByUserId(userId);
     }
 }

@@ -7,7 +7,7 @@ import java.util.Optional;
 public class UserAccountService {
 
     private UserAccountRepository userAccountRepository;
-    public Optional<UserAccount> userAccountList(String Id){
+    public Optional<UserAccount> userAccountList(Long Id){
      return userAccountRepository.findByUserId(Id);
     }
 }

@@ -21,13 +21,13 @@ public class UserAccountController {
     }
 
     @GetMapping("/{userId}")
-    public Optional<UserAccount> userAccounts(@PathVariable String userId){
+    public Optional<UserAccount> userAccounts(@PathVariable Long userId){
         Optional<UserAccount> userAccounts = userAccountRepository.findByUserId(userId);
         return userAccounts;
     }
 
     @PutMapping("/{userId}")
-    public ResponseEntity<UserAccount> updateUserAccount(@PathVariable String userId, @RequestBody UserAccount userAccount){
+    public ResponseEntity<UserAccount> updateUserAccount(@PathVariable Long userId, @RequestBody UserAccount userAccount){
         Optional<UserAccount> existingUserAccount = userAccountRepository.findByUserId(userId);
        if(existingUserAccount.isPresent()){
            UserAccount userAccount1 = existingUserAccount.get();
@@ -41,7 +41,7 @@ public class UserAccountController {
     }
 
     @DeleteMapping({"/{userId}"})
-    public Optional<UserAccount> deleteUserAccount(@PathVariable String userId){
+    public Optional<UserAccount> deleteUserAccount(@PathVariable Long userId){
         Optional<UserAccount> dbUserAccount = userAccountRepository.findByUserId(userId);
         if(dbUserAccount.isPresent()){
             userAccountRepository.deleteById(userId);
