@@ -10,10 +10,10 @@ import java.util.Objects;
 @Table(name = "user_account")
 public class UserAccount {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long Id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "user_id", insertable = false, updatable = false)
-    private User user;
 
     @Column(name = "account_number", columnDefinition = "BIGINT")
     private Long accountNumber;
@@ -21,20 +21,21 @@ public class UserAccount {
     private Long balance;
     @Column(name = "account_type", columnDefinition = "VARCHAR(255)")
     private String accountType;
+
+    public Long getId() {
+        return Id;
+    }
+
+    public void setId(Long id) {
+        Id = id;
+    }
+
     @Column(name = "creation_time")
     private LocalDateTime creationTime;
 
-    @Id
     @Column(name = "user_id")
     private Long userId;
 
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
 
     public Long getAccountNumber() {
         return accountNumber;

@@ -10,7 +10,8 @@ import java.util.List;
 public class User {
 
     private String name;
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user")
     private List<UserAccount> userAccounts;
     @Id
     @Column(name = "user_id")
@@ -19,8 +20,7 @@ public class User {
     private String userName;
     private String email;
     private String address;
-    private Long accountNumber;
-    private String accountType;
+
 
     public String getName() {
         return name;
@@ -55,21 +55,6 @@ public class User {
         this.address = address;
     }
 
-    public Long getAccountNumber() {
-        return accountNumber;
-    }
-
-    public void setAccountNumber(Long accountNumber) {
-        this.accountNumber = accountNumber;
-    }
-
-    public String getAccountType() {
-        return accountType;
-    }
-
-    public void setAccountType(String accountType) {
-        this.accountType = accountType;
-    }
 
     public Long getUserId() {
         return userId;

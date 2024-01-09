@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
+@RequestMapping("/User")
 public class UserController {
 
     @Autowired
@@ -92,7 +93,6 @@ public class UserController {
                 List<UserAccount> userAccounts = new ArrayList<>();
                 for (UserAccountDTO accountDTO : userDTO.getUserAccounts()) {
                     UserAccount account = convertToUserAccount(accountDTO,userDTO);
-                    account.setUser(user);
                     userAccounts.add(account);
                 }
 
