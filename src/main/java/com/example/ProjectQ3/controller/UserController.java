@@ -124,6 +124,11 @@ public class UserController {
                     user.setAddress(userDTO.getAddress());
                     user.setName(userDTO.getName());
                     List<UserAccount> existingUserAccounts = user.getUserAccounts();
+                    UserAccountDTO newAccountDTO = userDTO.getUserAccounts().get(0);
+                    if (existingUserAccounts.stream()
+                            .anyMatch(userAccount -> userAccount.getAccountNumber().equals(newAccountDTO.getAccountNumber()))) {
+                        throw new RuntimeException("Account number already exists: " + newAccountDTO.getAccountNumber());
+                    }
                     List<UserAccount> newUserAccounts = new ArrayList<>();
                     for (UserAccountDTO accountDTO : userDTO.getUserAccounts()) {
                         UserAccount account = convertToUserAccount(accountDTO, userDTO);
@@ -132,7 +137,7 @@ public class UserController {
                     existingUserAccounts.addAll(newUserAccounts);
                     user.setUserAccounts(existingUserAccounts);
                     userRepository.save(user);
-                } 
+                }
             }
             return new ResponseEntity<>("Users and UserAccounts created/updated successfully.", HttpStatus.CREATED);
         } catch (Exception e) {
