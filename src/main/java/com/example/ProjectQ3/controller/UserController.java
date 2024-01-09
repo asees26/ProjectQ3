@@ -3,7 +3,9 @@ import com.example.ProjectQ3.models.User;
 import com.example.ProjectQ3.models.UserAccount;
 import com.example.ProjectQ3.models.UserAccountDTO;
 import com.example.ProjectQ3.models.UserDTO;
+import com.example.ProjectQ3.repository.UserAccountRepository;
 import com.example.ProjectQ3.repository.UserRepository;
+import com.example.ProjectQ3.service.UserAlreadyExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,8 +28,8 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    public List<User> findByUserID(@PathVariable Long userId) {
-        List<User> user = userRepository.findByUserId(userId);
+    public Optional<User> findByUserID(@PathVariable Long userId) {
+        Optional<User> user = userRepository.findByUserId(userId);
         return user;
     }
 
@@ -83,27 +85,61 @@ public class UserController {
     public ResponseEntity<String> createUserAndAccounts(@RequestBody List<UserDTO> userDTOList) {
         try {
             for (UserDTO userDTO : userDTOList) {
-                User user = new User();
-                user.setUserName(userDTO.getUserName());
-                user.setEmail(userDTO.getEmail());
-                user.setAddress(userDTO.getAddress());
-                user.setName(userDTO.getName());
-                user.setUserId(userDTO.getUserId());
+                Optional<User> existingUser = userRepository.findByUserId(userDTO.getUserId());
+                if (existingUser.isPresent()) {
+                    throw new UserAlreadyExistsException("User with ID " + userDTO.getUserId() + " already exists");
+                } else {
+                    User user = new User();
+                    user.setUserName(userDTO.getUserName());
+                    user.setEmail(userDTO.getEmail());
+                    user.setAddress(userDTO.getAddress());
+                    user.setName(userDTO.getName());
+                    user.setUserId(userDTO.getUserId());
 
-                List<UserAccount> userAccounts = new ArrayList<>();
-                for (UserAccountDTO accountDTO : userDTO.getUserAccounts()) {
-                    UserAccount account = convertToUserAccount(accountDTO,userDTO);
-                    userAccounts.add(account);
+                    List<UserAccount> userAccounts = new ArrayList<>();
+                    for (UserAccountDTO accountDTO : userDTO.getUserAccounts()) {
+                        UserAccount account = convertToUserAccount(accountDTO, userDTO);
+                        userAccounts.add(account);
+                    }
+
+                    user.setUserAccounts(userAccounts);
+                    userRepository.save(user);
                 }
-
-                user.setUserAccounts(userAccounts);
-                userRepository.save(user);
             }
             return new ResponseEntity<>("Users and UserAccounts created successfully.", HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>("Error creating Users and UserAccounts.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @PutMapping("/addUserAccount")
+    public ResponseEntity<String> updateUserAccount(@RequestBody List<UserDTO> userDTOList) {
+        try {
+            for (UserDTO userDTO : userDTOList) {
+                Optional<User> optionalUser = userRepository.findById(userDTO.getUserId());
+                if (optionalUser.isPresent()) {
+                    User user = optionalUser.get();
+                    user.setUserName(userDTO.getUserName());
+                    user.setEmail(userDTO.getEmail());
+                    user.setAddress(userDTO.getAddress());
+                    user.setName(userDTO.getName());
+                    List<UserAccount> existingUserAccounts = user.getUserAccounts();
+                    List<UserAccount> newUserAccounts = new ArrayList<>();
+                    for (UserAccountDTO accountDTO : userDTO.getUserAccounts()) {
+                        UserAccount account = convertToUserAccount(accountDTO, userDTO);
+                        newUserAccounts.add(account);
+                    }
+                    existingUserAccounts.addAll(newUserAccounts);
+                    user.setUserAccounts(existingUserAccounts);
+                    userRepository.save(user);
+                } 
+            }
+            return new ResponseEntity<>("Users and UserAccounts created/updated successfully.", HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error creating/updating Users and UserAccounts.", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 
 
 }
