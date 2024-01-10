@@ -1,5 +1,6 @@
 package com.example.ProjectQ3.controller;
 
+import com.example.ProjectQ3.models.User;
 import com.example.ProjectQ3.models.UserAccount;
 import com.example.ProjectQ3.repository.UserAccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,12 @@ public class UserAccountController {
         Optional<UserAccount> userAccounts = userAccountRepository.findByUserId(userId);
         return userAccounts;
     }
+
+    @GetMapping
+    public List<UserAccount> getAllUsersAccount() {
+        return userAccountRepository.findAll();
+    }
+
 
     @PutMapping("/{userId}")
     public ResponseEntity<UserAccount> updateUserAccount(@PathVariable Long userId, @RequestBody UserAccount userAccount){
